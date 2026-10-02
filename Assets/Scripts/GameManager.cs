@@ -6,18 +6,41 @@ using UnityEngine.SceneManagement;
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance = null;
-
+    public GameObject revealObject;
+    bool hasRevealed = false;
     #region Unity_functions
-    private void Awake() {
-        if(Instance == null)
+    private void Awake()
+    {
+        if (Instance == null)
         {
             Instance = this;
         }
-        else if(Instance != this)
+        else if (Instance != this)
         {
             Destroy(this.gameObject);
         }
         DontDestroyOnLoad(gameObject);
+    }
+    private void Update()
+    {
+        if (!hasRevealed)
+        {
+            GameObject[] remainingEnemies = GameObject.FindGameObjectsWithTag("Enemy");
+            Debug.Log("Enemies remaining: " + remainingEnemies.Length);
+
+            if (remainingEnemies.Length == 0)
+            {
+                if (revealObject != null)
+                {
+                    revealObject.SetActive(true);
+                    hasRevealed = true;
+                }
+                else
+                {
+                    Debug.LogWarning("revealObject is not assigned in the Inspector!");
+                }
+            }
+        }
     }
     bool IsSceneActive(string sceneName)
     {
@@ -25,11 +48,11 @@ public class GameManager : MonoBehaviour
     }
     #endregion
 
-        #region Scene_transitions
+    #region Scene_transitions
     public void StartGame()
     {
         /* TODO 7.2: Change the scene when this function is called to the appropriate scene using SceneManager.LoadScene() */
-        SceneManager.LoadScene("Level_1");
+        SceneManager.LoadScene("Floor1");
     }
 
     public void LoseGame()
@@ -41,19 +64,19 @@ public class GameManager : MonoBehaviour
     public void WinRound()
     {
         /* TODO 7.2: Change the scene when this function is called to the appropriate scene using SceneManager.LoadScene() */
-        if (IsSceneActive("Level_1"))
+        if (IsSceneActive("Floor1"))
         {
-            SceneManager.LoadScene("Level_2");
+            SceneManager.LoadScene("Floor2");
         }
-        else if (IsSceneActive("Level_2"))
+        else if (IsSceneActive("Floor2"))
         {
-            SceneManager.LoadScene("Level_3");
+            SceneManager.LoadScene("Floor3");
         }
-        else if (IsSceneActive("Level_3"))
+        else if (IsSceneActive("Floor3"))
         {
             SceneManager.LoadScene("WinScene");
         }
-        
+
     }
 
     public void MainMenu()
